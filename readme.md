@@ -15,16 +15,16 @@ MovieMadness is an Android app that allows users to explore a vast collection of
 
 ## Screenshots
 
-![Screenshot 1](screenshots/movie_list_modern.png)
+<img src="screenshots/movie_list_modern.png" width="25%" alt="Screenshot 1">
 *Screenshot 1: Basic List Screen*
 
-![Screenshot 2](screenshots/movie_list_modern.png)
+<img src="screenshots/movie_list_modern.png" width="25%" alt="Screenshot 2">
 *Screenshot 2: Modern List Screen*
 
-![Screenshot 3](screenshots/movie_detail_1.png)
+<img src="screenshots/movie_detail_1.png" width="25%" alt="Screenshot 3">
 *Screenshot 3: Movie Details E.g 1*
 
-![Screenshot 4](screenshots/movie_detail_2.png)
+<img src="screenshots/movie_detail_2.png" width="25%" alt="Screenshot 4">
 *Screenshot 4: Movie Detail E.g 2*
 
 ## License
