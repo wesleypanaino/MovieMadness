@@ -16,7 +16,8 @@ import javax.inject.Inject
 class MovieListViewModel @Inject constructor(
     private val getMovieUseCase: GetMovieUseCase
 ) : ViewModel() {
-    private val _state = mutableStateOf(MovieListState())
+    var viewMode: ViewMode = ViewMode.GRID
+    private val _state = mutableStateOf(MovieListState(viewMode = viewMode))
     val state: State<MovieListState> = _state
     private val TAG = "MovieListViewModel"
     private var currentPage = 1
@@ -44,23 +45,24 @@ class MovieListViewModel @Inject constructor(
                     .collect { result ->
                         when (result) {
                             is Resource.Success -> {
-                                _state.value = MovieListState(movies = result.data ?: emptyList())
+                                _state.value = MovieListState(viewMode= viewMode,
+                                    movies = result.data ?: emptyList())
                             }
 
                             is Resource.Error -> {
-                                _state.value = MovieListState(
+                                _state.value = MovieListState(viewMode= viewMode,
                                     error = result.message ?: "An unexpected error occurred"
                                 )
                             }
 
                             is Resource.Loading -> {
-                                _state.value = MovieListState(isLoading = true)
+                                _state.value = MovieListState(viewMode= viewMode,isLoading = true)
                             }
                         }
                     }
             } catch (e: Exception) {
                 _state.value =
-                    MovieListState(error = e.localizedMessage ?: "An unexpected error occurred")
+                    MovieListState(viewMode=viewMode,error = e.localizedMessage ?: "An unexpected error occurred")
             }
         }
     }
@@ -90,6 +92,11 @@ class MovieListViewModel @Inject constructor(
             }
 
             ScreenEvents.GoBack -> {}
+            ScreenEvents.ToggleViewMode -> {
+                viewMode = viewMode.next()
+                Log.d(TAG, "viewMode changed to: $viewMode")
+                _state.value = MovieListState(viewMode = viewMode, movies = _state.value.movies)
+            }
         }
     }
 }

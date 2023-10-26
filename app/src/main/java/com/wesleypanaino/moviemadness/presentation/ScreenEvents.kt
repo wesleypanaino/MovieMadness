@@ -7,4 +7,5 @@ sealed class ScreenEvents {
     object Refresh : ScreenEvents()
     object NextPage : ScreenEvents()
     object PreviousPage : ScreenEvents()
+    object ToggleViewMode : ScreenEvents()
 }

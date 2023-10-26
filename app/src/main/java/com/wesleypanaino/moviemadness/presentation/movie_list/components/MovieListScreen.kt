@@ -56,7 +56,6 @@ fun MovieListScreen(
     onEvent: (ScreenEvents) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    var isGridMode by remember { mutableStateOf(true) }
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
 
@@ -70,24 +69,29 @@ fun MovieListScreen(
                     TopBarWithLogo()
                 },
                 actions = {
-                    IconButton(onClick = { ScreenEvents.ShowSnackBar("TV Coming soon") }) {
+                    IconButton(onClick = { onEvent(ScreenEvents.ShowSnackBar("TV Coming soon") )}) {
                         Icon(
                             painterResource(id = R.drawable.theaters_24px),
                             contentDescription = "Movies",
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
                         )
                     }
-                    IconButton(onClick = { ScreenEvents.ShowSnackBar("Search Coming soon") }) {
+                    IconButton(onClick = { onEvent(ScreenEvents.ShowSnackBar("Search Coming soon")) }) {
                         Icon(
                             imageVector = Icons.Filled.Search,
                             contentDescription = "Search",
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
                         )
                     }
-                    IconButton(onClick = { isGridMode = !isGridMode }) {
+                    IconButton(onClick = { onEvent(ScreenEvents.ToggleViewMode )}) {
                         Icon(
-                            painterResource(id = if (isGridMode) R.drawable.view_list_24px else R.drawable.drag_indicator_24px ),
-                            contentDescription = if (isGridMode) "Switch to List View" else "Switch to Grid View",
+                            painterResource(
+                                id = when (state.viewMode) {
+                                    ViewMode.LIST -> R.drawable.view_list_24px
+                                    ViewMode.GRID -> R.drawable.drag_indicator_24px
+                                }
+                            ),
+                            contentDescription = "Toggle View Mode",
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
                         )
                     }
@@ -100,8 +104,7 @@ fun MovieListScreen(
             ScreenContent(
                 paddingValues = paddingValues,
                 state = state,
-                onEvent = onEvent,
-                isGridMode = isGridMode
+                onEvent = onEvent
             )
         }
     }
@@ -111,8 +114,7 @@ fun MovieListScreen(
 fun ScreenContent(
     paddingValues: PaddingValues,
     state: MovieListState,
-    onEvent: (ScreenEvents) -> Unit,
-    isGridMode: Boolean
+    onEvent: (ScreenEvents) -> Unit
 ) {
     Column {
         if (state.isLoading) {
@@ -131,83 +133,85 @@ fun ScreenContent(
                     .align(Alignment.CenterHorizontally)
             )
         }
-        if (isGridMode) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2), // You can adjust the number of columns here
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(state.movies) { movie ->
-                    MovieListItem(
-                        movie = movie,
-                        onItemClick = {
-                            Log.i(
-                                TAG,
-                                "MovieListScreen onItemClick ${
-                                    ScreenEvents.Navigate(
-                                        ScreenRoutes.MovieDetailScreen.route + "/${movie.id}"
-                                    )
-                                }"
-                            )
-                            onEvent(ScreenEvents.Navigate(ScreenRoutes.MovieDetailScreen.route + "/${movie.id}"))
-                        }
-                    )
-                }
-                if (!state.isLoading)
-                    item {
-                        IconButton(
-                            modifier = Modifier.align(Alignment.Start),
-                            onClick = {
-                                onEvent(ScreenEvents.PreviousPage)
-                            },
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.ArrowBack,
-                                contentDescription = "Previous Page",
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            )
-                        }
+        when (state.viewMode) {
+            ViewMode.LIST -> {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(state.movies) { movie ->
+                        MovieListItemBasic(
+                            movie = movie,
+                            onItemClick = {
+                                Log.i(
+                                    TAG,
+                                    "MovieListScreen onItemClick ${
+                                        ScreenEvents.Navigate(ScreenRoutes.MovieDetailScreen.route + "/${movie.id}")
+                                    }"
+                                )
+                                onEvent(ScreenEvents.Navigate(ScreenRoutes.MovieDetailScreen.route + "/${movie.id}"))
+                            }
+                        )
+                        Divider()
                     }
-                if (!state.isLoading)
-                    item {
-                        IconButton(modifier = Modifier.align(Alignment.End), onClick = {
-                            onEvent(ScreenEvents.NextPage)
-                        }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.ArrowForward,
-                                contentDescription = "Next Page",
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            )
-                        }
-                    }
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(state.movies) { movie ->
-                    MovieListItemBasic(
-                        movie = movie,
-                        onItemClick = {
-                            Log.i(
-                                TAG,
-                                "MovieListScreen onItemClick ${
-                                    ScreenEvents.Navigate(ScreenRoutes.MovieDetailScreen.route + "/${movie.id}")
-                                }"
-                            )
-                            onEvent(ScreenEvents.Navigate(ScreenRoutes.MovieDetailScreen.route + "/${movie.id}"))
-                        }
-                    )
-                    Divider()
-                }
-                if (!state.isLoading)
-                    item {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
+                    if (!state.isLoading)
+                        item {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
 
+                                IconButton(
+                                    onClick = {
+                                        onEvent(ScreenEvents.PreviousPage)
+                                    },
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.ArrowBack,
+                                        contentDescription = "Previous Page",
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    )
+                                }
+
+                                IconButton(onClick = {
+                                    onEvent(ScreenEvents.NextPage)
+                                }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.ArrowForward,
+                                        contentDescription = "Next Page",
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    )
+                                }
+                            }
+                        }
+                }
+            }
+
+            ViewMode.GRID -> {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2), // You can adjust the number of columns here
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(state.movies) { movie ->
+                        MovieListItem(
+                            movie = movie,
+                            onItemClick = {
+                                Log.i(
+                                    TAG,
+                                    "MovieListScreen onItemClick ${
+                                        ScreenEvents.Navigate(
+                                            ScreenRoutes.MovieDetailScreen.route + "/${movie.id}"
+                                        )
+                                    }"
+                                )
+                                onEvent(ScreenEvents.Navigate(ScreenRoutes.MovieDetailScreen.route + "/${movie.id}"))
+                            }
+                        )
+                    }
+                    if (!state.isLoading)
+                        item {
                             IconButton(
+                                modifier = Modifier.align(Alignment.Start),
                                 onClick = {
                                     onEvent(ScreenEvents.PreviousPage)
                                 },
@@ -218,8 +222,10 @@ fun ScreenContent(
                                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
                                 )
                             }
-
-                            IconButton(onClick = {
+                        }
+                    if (!state.isLoading)
+                        item {
+                            IconButton(modifier = Modifier.align(Alignment.End), onClick = {
                                 onEvent(ScreenEvents.NextPage)
                             }
                             ) {
@@ -230,9 +236,10 @@ fun ScreenContent(
                                 )
                             }
                         }
-                    }
+                }
             }
         }
+
     }
 }
 
@@ -242,6 +249,7 @@ fun MovieListScreenPreview() {
     MovieMadnessTheme {
         MovieListScreen(
             state = MovieListState(
+                viewMode = ViewMode.GRID,
                 isLoading = true,
                 movies = listOf(
                     Movie(

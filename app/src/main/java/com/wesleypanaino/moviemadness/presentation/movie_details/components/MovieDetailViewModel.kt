@@ -84,6 +84,10 @@ class MovieDetailViewModel @Inject constructor(
             ScreenEvents.GoBack -> {
                 Log.e(TAG, "MovieListViewModel.ScreenEvents.GoBack")
             }
+
+            ScreenEvents.ToggleViewMode -> {
+                //not used here
+            }
         }
     }
 }
