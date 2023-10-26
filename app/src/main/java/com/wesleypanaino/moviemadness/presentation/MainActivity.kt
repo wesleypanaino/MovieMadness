@@ -1,7 +1,6 @@
 package com.wesleypanaino.moviemadness.presentation
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,7 +25,6 @@ private val TAG = "MainActivity"
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -43,7 +41,6 @@ class MainActivity : ComponentActivity() {
                         composable(ScreenRoutes.MovieListScreen.route) {
                             val viewModel: MovieListViewModel = hiltViewModel()
                             val state by viewModel.state
-                            Log.i(TAG, "Screen.MovieListScreen.rou")
                             MovieListScreen(state = state,
                                 onEvent = { event ->
                                     handleEvent(event, navController, viewModel::onEvent)
