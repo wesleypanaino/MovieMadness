@@ -14,18 +14,18 @@ MovieMadness is an Android app that allows users to explore a vast collection of
 - Show TV 
 
 ## Screenshots
-
-<img src="screenshots/movie_list_modern.png" width="25%" alt="Screenshot 1">
 *Screenshot 1: Basic List Screen*
+<img src="screenshots/movie_list_basic.png" width="25%" alt="Screenshot 1">
 
-<img src="screenshots/movie_list_modern.png" width="25%" alt="Screenshot 2">
 *Screenshot 2: Modern List Screen*
+<img src="screenshots/movie_list_modern.png" width="25%" alt="Screenshot 2">
 
-<img src="screenshots/movie_detail_1.png" width="25%" alt="Screenshot 3">
 *Screenshot 3: Movie Details E.g 1*
+<img src="screenshots/movie_detail_1.png" width="25%" alt="Screenshot 3">
 
-<img src="screenshots/movie_detail_2.png" width="25%" alt="Screenshot 4">
 *Screenshot 4: Movie Detail E.g 2*
+<img src="screenshots/movie_detail_2.png" width="25%" alt="Screenshot 4">
+
 
 ## License
 
