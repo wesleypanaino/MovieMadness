@@ -1,6 +1,6 @@
 # MovieMadness
 
-MovieMadness is an Android app that allows users to explore a vast collection of movies fetched from The Movie Database (TMDB). This repository contains the source code for the MovieMadness Android app. The app is built using Kotlin and leverages modern Android development tools and architecture components, including Jetpack Compose, Google Material 3, Clean Architecture, MVI (Model-View-Intent), and Hilt for Dependency Injection.
+MovieMadness is an Android app that allows users to explore a vast collection of movies fetched from The Movie Database (TMDB). This repository contains the source code for the MovieMadness Android app. The app is built using Kotlin and leverages modern Android development tools and architecture components, including Jetpack Compose, Google Material 3, Clean Architecture, MVVM (Model-View-ViewModel), and Hilt for Dependency Injection.
 
 ## Features
 
