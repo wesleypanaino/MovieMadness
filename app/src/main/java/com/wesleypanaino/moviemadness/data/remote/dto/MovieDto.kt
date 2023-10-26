@@ -1,6 +1,7 @@
 package com.wesleypanaino.moviemadness.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
+import com.wesleypanaino.moviemadness.domain.model.Movie
 
 data class MovieDto(
     val adult: Boolean,
@@ -26,3 +27,18 @@ data class MovieDto(
     @SerializedName("vote_count")
     val voteCount: Int
 )
+
+fun MovieDto.toMovie(): Movie {
+    return Movie(
+        backdropPath = backdropPath,
+        genreIds = genreIds,
+        id = id,
+        originalTitle = originalTitle,
+        overview = overview,
+        posterPath = posterPath,
+        releaseDate = releaseDate,
+        title = title,
+        voteAverage = voteAverage,
+        voteCount = voteCount
+    )
+}
