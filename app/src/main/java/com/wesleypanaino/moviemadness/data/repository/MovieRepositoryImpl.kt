@@ -1,5 +1,6 @@
 package com.wesleypanaino.moviemadness.data.repository
 
+import android.util.Log
 import com.wesleypanaino.moviemadness.common.Resource
 import com.wesleypanaino.moviemadness.data.remote.TheMovieDataBaseApi
 import com.wesleypanaino.moviemadness.data.remote.dto.toMovie
@@ -19,15 +20,17 @@ class MovieRepositoryImpl @Inject constructor(
     private val api: TheMovieDataBaseApi
 ) : MovieRepository {
 
-
+private val TAG= "MovieRepositoryImpl"
     override suspend fun getMovies(page: Int): Flow<Resource<List<Movie>>> = flow {
         try {
             emit(Resource.Loading())
             val movies = api.getMovies(page).results.map { it.toMovie() }
             emit(Resource.Success(movies))
         } catch (e: HttpException) {
+            Log.e(TAG,"HttpException getMovies: ${e.localizedMessage}")
             emit(Resource.Error(e.localizedMessage ?: "An unexpected error occurred"))
         } catch (e: IOException) {
+            Log.e(TAG,"IOException getMovies: ${e.localizedMessage}")
             emit(Resource.Error("Unable to reach server. Please check your internet connection."))
         }
     }.flowOn(Dispatchers.IO)
@@ -38,8 +41,10 @@ class MovieRepositoryImpl @Inject constructor(
             val movies = api.getMovieDetailByID(movieId).toMovieDetail()
             emit(Resource.Success(movies))
         } catch (e: HttpException) {
+            Log.e(TAG,"HttpException getMovieDetailByID: ${e.localizedMessage}")
             emit(Resource.Error(e.localizedMessage ?: "An unexpected error occurred"))
         } catch (e: IOException) {
+            Log.e(TAG,"IOException getMovieDetailByID: ${e.localizedMessage}")
             emit(Resource.Error("Unable to reach server. Please check your internet connection."))
         }
     }.flowOn(Dispatchers.IO)
