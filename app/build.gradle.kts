@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 @Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     kotlin("kapt")  // Kotlin Annotation Processing Tool (KAPT) plugin for processing annotations.
@@ -6,7 +9,13 @@ plugins {
     id("com.android.application")  // Android Application plugin to indicate this is an application module.
     id("org.jetbrains.kotlin.android")  // Kotlin Android plugin for building Android apps with Kotlin.
 }
-
+// Load the secrets.properties file
+val secretsProperties = Properties()
+val secretsPropertiesFile = rootProject.file("secrets.properties")
+if (secretsPropertiesFile.exists()) {
+    secretsProperties.load(FileInputStream(secretsPropertiesFile))
+}
+android.buildFeatures.buildConfig = true
 android {
     namespace = "com.wesleypanaino.moviemadness"
     compileSdk = 34
@@ -25,11 +34,24 @@ android {
     }
 
     buildTypes {
+        debug {
+            isMinifyEnabled = false
+            buildConfigField(
+                String::class.java.typeName,
+                "API_KEY",
+                secretsProperties["API_KEY"].toString()
+            )
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
+            )
+            buildConfigField(
+                String::class.java.typeName,
+                "API_KEY",
+                secretsProperties["API_KEY"].toString()
             )
         }
     }
