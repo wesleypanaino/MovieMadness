@@ -12,3 +12,4 @@ misc.xml
 deploymentTargetDropDown.xml
 render.experimental.xml
 *.jks
+secrets.properties
