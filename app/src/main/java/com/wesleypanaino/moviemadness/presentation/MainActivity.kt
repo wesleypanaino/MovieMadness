@@ -21,7 +21,7 @@ import com.wesleypanaino.moviemadness.presentation.movie_list.components.MovieLi
 import com.wesleypanaino.moviemadness.presentation.ui.theme.MovieMadnessTheme
 import dagger.hilt.android.AndroidEntryPoint
 
-private val TAG = "MainActivity"
+private const val TAG = "MainActivity"
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -59,28 +59,24 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
+    private fun handleEvent(
+        event: ScreenEvents,
+        navController: NavController,
+        viewModelEvent: (ScreenEvents) -> Unit
+    ) {
+        when (event) {
+            is ScreenEvents.Navigate -> {
+                navController.navigate(event.route)
+            }
 
-private fun handleEvent(
-    event: ScreenEvents,
-    navController: NavController,
-    viewModelEvent: (ScreenEvents) -> Unit
-) {
-    when (event) {
-        is ScreenEvents.Navigate -> {
-            navController.navigate(event.route)
+
+            is ScreenEvents.GoBack -> {
+                if(!navController.popBackStack()){
+                    navController.navigate( ScreenRoutes.MovieListScreen.route)
+                }
+            }
+
+            else -> viewModelEvent(event)
         }
-
-        is ScreenEvents.ShowSnackBar -> {
-            //todo
-        }
-
-        is ScreenEvents.GoBack -> {
-           if(!navController.popBackStack()){
-               navController.navigate( ScreenRoutes.MovieListScreen.route)
-           }
-        }
-
-        else -> viewModelEvent(event)
     }
 }
