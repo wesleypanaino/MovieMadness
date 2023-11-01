@@ -16,7 +16,7 @@ import javax.inject.Inject
 class MovieListViewModel @Inject constructor(
     private val getMovieUseCase: GetMovieUseCase
 ) : ViewModel() {
-    var viewMode: ViewMode = ViewMode.GRID
+    private var viewMode: ViewMode = ViewMode.GRID
     private val _state = mutableStateOf(MovieListState(viewMode = viewMode))
     val state: State<MovieListState> = _state
     private val TAG = "MovieListViewModel"
@@ -25,7 +25,8 @@ class MovieListViewModel @Inject constructor(
     init {
         getMovies()
     }
-    //todo boundary checks
+
+
     private fun getPreviousPage() {
         if (currentPage > 1) {
             currentPage--
@@ -45,39 +46,41 @@ class MovieListViewModel @Inject constructor(
                     .collect { result ->
                         when (result) {
                             is Resource.Success -> {
-                                _state.value = MovieListState(viewMode= viewMode,
-                                    movies = result.data ?: emptyList())
+                                val newMovies = _state.value.movies + (result.data ?: emptyList())
+                                _state.value =
+                                    MovieListState(viewMode = viewMode, movies = newMovies)
                             }
 
                             is Resource.Error -> {
-                                _state.value = MovieListState(viewMode= viewMode,
+                                _state.value = MovieListState(
+                                    viewMode = viewMode,
                                     error = result.message ?: "An unexpected error occurred"
                                 )
                             }
 
                             is Resource.Loading -> {
-                                _state.value = MovieListState(viewMode= viewMode,isLoading = true)
+                                _state.value = MovieListState(
+                                    viewMode = viewMode,
+                                    isLoading = true,
+                                    movies = _state.value.movies
+                                )
                             }
                         }
                     }
             } catch (e: Exception) {
                 _state.value =
-                    MovieListState(viewMode=viewMode,error = e.localizedMessage ?: "An unexpected error occurred")
+                    MovieListState(
+                        viewMode = viewMode,
+                        error = e.localizedMessage ?: "An unexpected error occurred"
+                    )
             }
         }
     }
 
     fun onEvent(screenEvents: ScreenEvents) {
         when (screenEvents) {
-            is ScreenEvents.Navigate -> {
-                Log.e(TAG, "MovieListViewModel.ScreenEvents.Navigate")
-                //not handled here
-            }
+            is ScreenEvents.Navigate -> {}
 
-            is ScreenEvents.ShowSnackBar -> {
-                Log.e(TAG, "MovieListViewModel.ScreenEvents.ShowSnackBar")
-                //not handled here
-            }
 
             is ScreenEvents.Refresh -> {
                 getMovies()

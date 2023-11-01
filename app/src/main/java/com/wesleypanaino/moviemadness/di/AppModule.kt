@@ -1,5 +1,6 @@
 package com.wesleypanaino.moviemadness.di
 
+import com.wesleypanaino.moviemadness.BuildConfig
 import com.wesleypanaino.moviemadness.common.Constants
 import com.wesleypanaino.moviemadness.data.remote.TheMovieDataBaseApi
 import com.wesleypanaino.moviemadness.data.repository.MovieRepositoryImpl
@@ -22,8 +23,7 @@ import javax.inject.Singleton
 object AppModule {
 
     private val interceptor = Interceptor { chain ->
-        //todo store API key securely
-        val API_KEY="YOUR_API_KEY_HERE"
+        val API_KEY = BuildConfig.API_KEY
         val originalRequest: Request = chain.request()
 
         val newRequest = originalRequest.newBuilder()
@@ -32,6 +32,7 @@ object AppModule {
 
         chain.proceed(newRequest)
     }
+
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
